@@ -1,0 +1,63 @@
+Classe Peca:
+    variaveis:
+    tamanho: inteiro para tamamho da peça
+    cor: inteiro indicando cor (1 - verde, 2 - azul, 3 - vermelho)
+    tempodevida: inteiro indicando quanto tempo (em segundos) a peça ainda tem pra ficar na memória
+    tempoemswap: inteiro indicando quanto tempo (em segundos) a peça ainta pode ficar na swap
+    flagtempodevida: booleano indicando permissão para decrementar o tempodevida
+    flagtempoemswap: booleano indicando permissão para decrementar o tempoemswap
+
+    funções:
+    resetTempoEmSwap: resetar o tempo de swap para o valor inicial
+    decrementarTempoEmSwap: decrementar o tempoemswap em 1 se for permitido
+    decrementarTempoDeVida: decrementar o tempodevida em 1 se for permitido
+    cronometrarTempoDeVida: habilita ou desabilita a permissão para decrementar o tempodevida
+    cronometrarTempoEmSwap: habilita ou desabilita a permissão para decrementar o em swap
+
+Classe Memoria:
+    variaveis:
+    numerodelinhas: inteiro indicando numero de linhas da matriz de Memoria
+    tamanhodaslinhas: inteiro indicando tamamho de cada linhas da matriz de Memoria
+    matriz[]: uma matriz de memória
+    flagalocacao: booleano indicando permissão para alocar uma nova peça
+
+    funções:
+    inserePeca: insere uma nova peca na memória se for permitido
+    removePeca: remove uma peca da memória
+    getPeca: retorna uma peca com base na posicao de Memoria desejada
+    bloquearAlocacao: desabilita a permissão para alocar nova peca
+    liberarAlocacao: habilita a permissão para alocar nova peca
+    destruirPeca: remove e destroi uma peca alocada
+
+Jogo:
+    variaveis:
+    pontos: inteiro para contabilizar o numero de pontos do jogador
+    tempodecorrido: inteiro para contabilizar o tempo em segundos passado desde o inicio do Jogo
+    swap: um objeto da classe Memoria para ser utilizado como swap
+    memprincipal: um objeto da classe Memoria para ser utilizado como memória principal
+    novapeca: um objeto da classe para apresentar nova peca para o jogador
+    temporizador: inteiro para contabilizar quanto tempo o jogador tem para alocar a peca
+    estado: estado em que a maquina de estados se encontra
+    flagtemporizador: flag para habilitar permissão de decrementar o temporizador
+    melhorposicao[]: inteiro indicando posicao em que o jogador deve alocar a peca
+
+    funções:
+    contarSegundos: contar quantos segundos se passou desde o ultimo looping de Jogo
+    capturarAcao: reconhecer qual acao o jogador flagtemporizador podem ser 3 tipos
+    decrementarTempoDasPecas: decrementa o tempo de todas as pecas em jogo, se estiver na memória
+        decrementa o tempodevida, se estiver na swap decrementa o tempoemswap. Não pode decremtar
+        os dois tempos juntos.
+    decrementarTemporizador: decrementa o temporizador em 1 se for permitido
+    calcularBestFit: calcular qual o melhor espaço vazio da memoria em que caiba a nova peca e
+        armazena essa posicao em melhorposicao
+    calcularWorstFit: calcular o pior espaço vazio da memoria para alocar a nova peca e armazena
+        essa posicao em melhorposicao
+    sortearTamanhoEAlgoritmo: sorteia um tamanho, uma cor e um algoritmo entre os predefinidos
+    criarEExibirNovaPeca: instancia um objeto da classe peca e o exibe no local correto
+    resetTemporizador: coloca o temporizador de volta para seu valor inicial
+    fimDeJogo: bloqueia todo o resto do jogo, exibe mensagem de game over e a pontuação do jogador
+
+
+
+
+
