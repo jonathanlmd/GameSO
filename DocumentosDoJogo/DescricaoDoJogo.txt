@@ -1,0 +1,98 @@
+Gerenciamento de Memória
+
+Plataforma: Web
+Jogadores: 1
+Gênero: Puzzle
+
+Descrição do jogo:
+    O jogo ilustra a dinâmica de trabalho que um gerenciador de memória tem dentro de um computador,
+    alocando e substituindo processos na memória de modo a preenche-la da melhor forma possível. 
+    No jogo, o jogador faz o gerenciamento dos novos processos que chegam a ele em forma de peças 
+    retangulares o mais rápido que ele consiga. Ele deve coloca-los na matriz de memória disponível 
+    seguindo a regra do escalonador indicado (best fit ou worst fit). A medida em que os processos 
+    vão sendo alocados e a medida que os processos vão finalizando o jogador marca pontos. 
+    Se demorar demais para alocar um processo o jogador começa a perder pontos. Caso a memória 
+    esteja cheia, ele poderá fazer movimentações para a memória de SWAP disponível, mas como isto 
+    custa tempo para um processador, ao jogador custará alguns de seus pontos. O jogo termina quando 
+    os pontos do jogador chegarem a zero ou menos.
+
+
+O ambiente de jogo:
+    O ambiente de jogo será uma matriz quadrada constituída de varias linhas numeradas, 
+    com um tamanho pré definido que será utilizada como a memória principal.
+
+    Ao lado uma matriz quadrada menor com tamanho variável, a depender do nível de 
+    dificuldade para ser utilizada como swap.
+
+    Um terceiro campo na parte superior apresentará uma peça, o nome de um algoritmo de 
+    alocação e um tempo em segundos.
+
+Ganhando pontos:
+    O jogador ganhará pontos toda vez que alocar peças na memória, podendo ganhar mais ou menos 
+    pontos por isso a depender do seu desempenho e agilidade. Também ganhará pontos por cada peça 
+    que for destruída da memória, ou seja, cada processo gerenciado corretamente e encerrado no 
+    seu tempo.
+
+Perdendo pontos:
+    O jogador perderá pontos se demorar para alocar cada peça nova na memória e quando precisar 
+    fazer swaps com a memória secundária.
+
+O objetivo:
+    O objetivo do jogo é fazer o maior número de pontos possível alocando o maior número de 
+    peças na matriz pelo maior tempo possível sem deixar que os pontos caiam a zero ou abaixo 
+    desse valor. Se isto acontecer o jogador perde o jogo.
+
+Das peças:
+    Peças retangulares com comprimentos variáveis irão aparecer no decorrer do jogo junto 
+    com o nome de um dos algoritmos, best fit ou worst fit.
+
+    Cada peça representa um processo. Terá comprimento variado simbolizando o tamanho do 
+    processo e terá uma cor (verde, azul ou vermelha) indicando o quanto aquele processo 
+    será utilizado. 
+
+    Cada peça terá um tempo aleatório agregado a ela indicando o quanto tempo a peça permanecerá 
+    na memória. Esse tempo não é visível para o jogador.
+
+Da alocação das peças:
+    As peças que aparecerem devem ser alocadas de alguma maneira na memória principal seguindo
+    a regra do algoritmo indicado com ela.
+
+    Caso a peça não seja alocada em 3 segundos, o jogador perderá 10 pontos para cada segundo 
+    adicional em que a peça continue sem ser alocada.
+
+    Se alocado corretamente o jogador ganhará 15 pontos, caso contrário 5 pontos.
+
+    Quanto mais rápido a peça for alocada, mais pontos bônus o jogador irá ganhar. Se demorar 1 
+    segundo 5 pontos, 2 segundos 3 pontos. 3 segundos 0 pontos.
+
+Da matriz de memória:
+    A matriz maior será constituída de várias linhas empilhadas, representando uma memória 
+    segmentada em partições iguais (particionamento estático). Cada linha será particionada 
+    conforme o tamanho de cada peça que for introduzida nela (particionamento dinâmico). 
+    Uma peça não pode ser alocada em mais de uma linha (ex.: metade em uma linha e metade em outra).
+
+    Cada peça permanecerá na memória por um tempo aleatório desconhecido pelo jogador e 
+    ao termino desse tempo, a peça será destruída, marcando 5 pontos para o jogador.
+
+Da Swap
+    A matriz secundária não poderá ser maior que a principal e deverá ter uma tamanho 
+    adequado conforme o nível de dificuldade.
+    Quando não houver mais espaço na memória principal, ou quando for preferivel ao 
+    jogador, ele poderá mover alguma peça já alocada para a memória de SWAP para liberar espaço.
+
+    Cada movimentação para a SWAP gastará 10 pontos do jogador.
+
+    Um peça pode permanecer na SWAP por um número de tempo relacionado a sua cor (verde = 10s, 
+    azul 5s, vermelha 3s).
+
+    Ao término desse tempo o jogador deve colocar novamente a peça na memória principal. 
+    Enquanto isso não acontecer o jogador não poderá alocar um nova peça.
+
+    A movimentação da memória SWAP para a principal não custa pontos ao jogador.
+
+    O tempo em que a peça ficar na memória SWAP não conta no tempo de vida dela. Sendo assim, 
+    nenhuma peça pode ser destruida enquanto estiver na SWAP.
+
+Obs.: O tempo para a peça ser alocada,destruida ou o tempo de permanencia na swap
+bem como o número de pontos ganhos, de bônus ou de penalidade podem ser alterados 
+para garantir uma dificuldade adequada. Isso será poderá ser verificado na fase de testes.
