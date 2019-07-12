@@ -3,6 +3,15 @@ var config = {
 	width: 800,
 	height: 600,
 	backgroundColor: '#7f7196',
+	physics: {
+        default: 'matter',
+        matter: {
+            gravity: {
+                x: 0,
+                y: 0
+            }
+        }
+    },
 	scene: {
 		preload: preload,
 		create: create,
@@ -23,7 +32,13 @@ function preload ()
 function create ()
 {
 	// qual algoritmo
-	//var infoalgoritmo = this.add.text(660, 180, 'bestfit', { fill: '#000000' });
+	var infoalgoritmo = this.add.text(660, 180, 'bestfit', { fill: '#000000' });
+	var infomenu = this.add.text(670, 260, 'MENU', { fill: '#000000' });
+	var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000' });
+	var inforecordepontos = this.add.text(660, 300, '999', { fill: '#000000' });
+	var infopontuacao = this.add.text(660, 320, 'Pontuação', { fill: '#000000' });
+	var infopontuacaopontos = this.add.text(660, 340, '40', { fill: '#000000' });
+	var infopontuacaopontos = this.add.text(660, 340, '40', { fill: '#000000' });
 	
 	// paredes do jogo
 	var par1 = new Phaser.Geom.Rectangle(0, 0, 20, 600);
@@ -38,7 +53,7 @@ function create ()
 	var par4 = new Phaser.Geom.Rectangle(0, 580, 800, 20);
     var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
     graphics.fillRectShape(par4);
-	var par5 = new Phaser.Geom.Rectangle(600, 0, 20, 600);
+	var par5 = new Phaser.Geom.Rectangle(580, 0, 20, 600);
     var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
     graphics.fillRectShape(par5);
 	var par6 = new Phaser.Geom.Rectangle(600, 140, 200, 20);
@@ -47,11 +62,28 @@ function create ()
 	var par7 = new Phaser.Geom.Rectangle(600, 220, 200, 20);
     var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
     graphics.fillRectShape(par7);
+	var par8 = new Phaser.Geom.Rectangle(600, 400, 200, 20);
+    var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
+    graphics.fillRectShape(par8);
 	
-	
-	var novapeca = new Phaser.Geom.Rectangle(640, 80, 40, 40);
-	var graphics = this.add.graphics({ fillStyle: { color: cor } });
+	var novapeca = new Phaser.Geom.Rectangle(0, 0, 40, 40);
+	var graphics = this.add.graphics({ lineStyle: { color: 0x000000 }, fillStyle: { color: 0xff0000 }  });
+	graphics.strokeRectShape(novapeca);
 	graphics.fillRectShape(novapeca);
+	
+	var container = this.add.container(630, 60, [graphics]);
+    container.setSize(40, 40);
+    container.setInteractive();
+    this.input.setDraggable(container);
+   
+    this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+
+    });
+       
+	
 }
 
 function update ()
@@ -142,14 +174,27 @@ class Memoria{
     }       
 }
 /*
-	criarEExibirPeca(){
-		var novapeca = new Phaser.Geom.Rectangle(640, 80, tamanho, 40);
-		var graphics = this.add.graphics({ fillStyle: { color: cor } });
-		graphics.fillRectShape(novapeca);
+	function criarEExibirPeca(){
+		var novapeca = new Phaser.Geom.Rectangle(0, 0, 40, 40);
+	var graphics = this.add.graphics({ lineStyle: { color: 0x000000 }, fillStyle: { color: 0xff0000 }  });
+	graphics.strokeRectShape(novapeca);
+	graphics.fillRectShape(novapeca);
+	
+	var container = this.add.container(630, 60, [graphics]);
+    container.setSize(40, 40);
+    container.setInteractive();
+    this.input.setDraggable(container);
+   
+    this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+        gameObject.x = dragX;
+        gameObject.y = dragY;
+
+    });
 	}
 
 
-	sortearTamanhoCorEAlgoritmo(){
+	function sortearTamanhoCorEAlgoritmo(){
 			int i = Math.floor(Math.random() * 5);
 			//vermelho
 			if(i == 0){
