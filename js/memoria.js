@@ -28,6 +28,7 @@ class Peca{
         this.tempodevida = 5 + Math.floor(Math.random() * 8);
         this.flagtempodevida = true;
         this.flagtempoemswap = true;
+        this.flagalinhamento = false;
     }
 }
 
@@ -45,7 +46,10 @@ class Memoria{
         }
         this.flagalocacao = true;
     }
-    //Remove a peça especificada
+    /**
+     * Remove a peça especificada
+     * @param {objeto peça a ser removida} p 
+     */
     removePeca(p){
         if (p!=null) {
             for (let i = 0; i < this.numerodelinhas; i++) {
@@ -58,9 +62,15 @@ class Memoria{
             return true;
         }
         return false;
-	}
-	//Função adicional que remove uma peça com base na posição indicada e 
-	//retorna a peça que foi removida
+    }
+    /**
+     * Função adicional que remove uma peça com base na posição indicada e 
+     * retorna a peça que foi removida
+     * 
+     * @param {linha em que a peça a ser removida está alocada} linha 
+     * @param {posição da linha em que a peça está alocada} posicao 
+     */
+	
     removePeca_porposicao(linha,posicao){
         let temp = null;
         if(this.memoria[linha][posicao] != null){
@@ -73,7 +83,13 @@ class Memoria{
         }
         return temp;
     }
-    //insere a peça especificada na linha e posicao desejada
+    /**
+     * Insere a peça especificada na linha e posicao desejada
+     * 
+     * @param {peça a ser inserida} peca 
+     * @param {linha de inserção da peça} linha 
+     * @param {posição onde a peça será inserida} posicao 
+     */
     inserePeca(peca,linha,posicao){
         let temp = null;
         if(this.flagalocacao && peca.tamanho+posicao <=10){
@@ -92,22 +108,35 @@ class Memoria{
         return false;
     }
 
-    //Retorna a peça alocada na posição de memoria indicada;
-    //Se não houver peça retorna null;
+    /**
+     * Retorna a peça alocada na posição de memoria indicada;
+     * Se não houver peça retorna null;
+     * 
+     * @param {linha da posição de memoria} linha 
+     * @param {posição na linha de memória} posicao 
+     */
     getPeca(linha,posicao){
         return this.memoria[linha][posicao];
     }
-    //Bloqueia a alocação de nova peça para não ocorrer conflito no estado de swap
+    /**
+     * Bloqueia a alocação de nova peça para não ocorrer conflito no estado de swap
+     */
     bloquarAlocacao(){
         this.flagalocacao = false;
     }
-    //Libera a alocação de nova peça
+    /**
+     * Libera a alocação de nova peça
+     */
     liberarAlocacao(){
         this.flagalocacao = true;
     }
 
-    //Retirar uma peça da memoria e deleta ela visualmente do jogo
-    //A liberação do espaço fisico na memoria do computador é feita pelo garbage colector
+    /**
+     * Retirar uma peça da memoria e deleta ela visualmente do jogo
+     * A liberação do espaço fisico na memoria do computador é feita pelo garbage colector
+     * 
+     * @param {peça alocada a ser destruida} p 
+     */
     destruirPeca(p){
         this.removePeca(p);
         //resta implementar a remoção visual da peça;
@@ -126,6 +155,7 @@ var estado;
 var temporizador;
 var flagtemporizador = false;
 var tempodecorrido;
+var grid;
 
 var config = {
     type: Phaser.AUTO,
@@ -142,7 +172,43 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    
+    /**
+     * Criação do grid de memória principal
+     */
+    g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: {color: 0xf0000f}, fillStyle: { color: 0x00ff00, alpha: 1 } });
+    g.strokeRect(0, 0, 40, 40);
+    g.generateTexture('grid', 40, 40);
+
+    grid = this.add.group({
+        classType: Phaser.GameObjects.Image,
+        createCallback: function(item){
+            item.setInteractive();
+            item.input.dropZone = true;
+        },
+        key: 'grid',
+        repeat: 195,
+        max: 196,
+        active: true,
+        hitArea: new Phaser.Geom.Rectangle(0, 0, 40, 40),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+        gridAlign: {
+            width: 14,
+            cellWidth: 40,
+            cellHeight: 40,
+            x: 40,
+            y: 40
+        }
+    });
+
+    /**
+     * Definindo função para arrastar objeto
+     */
+    this.input.on('drag', function (pointer,gameObject, dragX, dragY) {
+        if(!novapeca.flagalinhamento){
+            gameObject.x = dragX;
+            gameObject.y = dragY;
+        }
+    });
 }
 
 function create ()
@@ -176,6 +242,7 @@ function create ()
 
     sortearTamanhoCorEAlgoritmo();
     criarEExibirPeca(this);
+
 }
 
 function update ()
@@ -261,6 +328,10 @@ function update ()
     }	
 }
 
+/**
+ * Função responsável por sortear Tamanho Cor e Algoritmo para a proxima peca a ser exibida
+ * Os valores são armazenados nas variaveis globais cor tamanho e algoritmo
+ */
 function sortearTamanhoCorEAlgoritmo(){
     let i = Math.floor(Math.random() * 5);
     //vermelho
@@ -297,35 +368,58 @@ function sortearTamanhoCorEAlgoritmo(){
 }
 
 
-/*
-    Função responsável por instanciar e exibir uma nova peça com base nas informações das variaveis
-    cor e tamanho
+/**
+ * Função responsável por instanciar e exibir uma nova peça com base nas informações das variaveis
+ * cor e tamanho
+ * 
+ * @param {parametro que recebe o contexto do pelo qual está sendo chamado} scene 
  */
-function criarEExibirPeca(scene){
+function criarEExibirPeca(scene){   
     novapeca = new Peca(tamanho,cor);
-    novapeca.imagem = new Phaser.Geom.Rectangle(0, 0, tamanho, 40);
-    novapeca.graphic = scene.add.graphics({ lineStyle: { color: 0x000000 }, fillStyle: { color: 0xff0000 }  });
+    novapeca.graphic = scene.make.graphics({ x: 0, y: 0, add: false, lineStyle: { color: 0x000000}, fillStyle: { color: 0xff0000, alpha: 1 } });
+    novapeca.graphic.fillRect(0, 0, novapeca.tamanho, 40);
+    novapeca.graphic.generateTexture('peca', novapeca.tamanho, 40);
+    novapeca.imagem = scene.add.image(630, 60, 'peca').setOrigin(0,0);
+    novapeca.imagem.name = 'novapeca';
+    novapeca.imagem.peca = novapeca;
+    novapeca.imagem.setInteractive();
+    scene.input.setDraggable(novapeca.imagem);
+    scene.children.bringToTop(novapeca.imagem);
 
-    novapeca.container = scene.add.container(630, 60, [novapeca.graphic]);
-    novapeca.container.setSize(novapeca.tamanho, 40);
-    novapeca.container.setInteractive();
-    novapeca.graphic.strokeRectShape(novapeca.imagem);
-    novapeca.graphic.fillRectShape(novapeca.imagem);
-    scene.input.setDraggable(novapeca.container);
+    novapeca.imagem.on('dragenter',function (pointer,target) {
+        this.peca.flagalinhamento = true;
+    });
 
-    scene.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+    novapeca.imagem.on('dragover',function (pointer,target) {
+        this.setPosition(target.getTopLeft().x, target.getTopLeft().y);
+    });
 
-        gameObject.x = dragX;
-        gameObject.y = dragY;
+    novapeca.imagem.on('dragover',function (pointer,target) {
+        this.setPosition(target.getTopLeft().x, target.getTopLeft().y);
+    });
 
+    novapeca.imagem.on('dragleave', function (pointer, target) {
+        this.peca.flagalinhamento = false;
+    });
+
+    novapeca.imagem.on('pointerup', function (pointer) {
+        if(this.peca.flagalinhamento == false){
+            this.setPosition(630, 60);
+        }
+    });
+
+    novapeca.imagem.on('drop',function (pointer, target) {
+        console.log(target);
     });
 }
 
-//Função BestFit retorna um vetor de 3 posições com as melhores posições para alocar a peça
-//1 posição são indices de linha e 2 posição são indices de onde iniciam os espaços vazios em cada linha
-//3 posição é o tamanho do melhor espaço
-//Ex.: [[0,3],[2,5],3] significa que o tamanho do melhor espaço é 3 e existem dois 
-//espaços na matriz com esse tamanho, um na linha 0 posição 2 e outro na linha 3 posição 5
+/**
+ * Função BestFit retorna um vetor de 3 posições com as melhores posições para alocar a peça
+ * 1 posição são indices de linha e 2 posição são indices de onde iniciam os espaços vazios em cada linha
+ * 3 posição é o tamanho do melhor espaço
+ * Ex.: [[0,3],[2,5],3] significa que o tamanho do melhor espaço é 3 e existem dois 
+ * espaços na matriz com esse tamanho, um na linha 0 posição 2 e outro na linha 3 posição 5
+ */
 function bestFit(peca,mem){
     let melhorescolha = [[],[],mem.tamanhodaslinhas];
     let min = peca.tamanho;
