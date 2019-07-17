@@ -238,7 +238,6 @@ function create ()
         }
     });
 
-
     // Exibe informações
     relogio = this.add.text(620,120, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
     infoalgoritmo = this.add.text(670, 180, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
