@@ -24,7 +24,7 @@ class Peca{
             default:
                 break;
         }
-        this.tempodevida = 5 + Math.floor(Math.random() * 8);
+        this.tempodevida = 20 + Math.floor(Math.random() * 8);
         this.flagtempodevida = false;
         this.flagtempoemswap = false;
         this.flagalinhamento = false;
@@ -158,8 +158,10 @@ var infoalgoritmo = null;
 var infopontuacaopontos = null;
 var melhorposicao;
 var temporizador;
-var flagtemporizador = false;
-var tempodecorrido;
+var flagtemporizador;
+var tempodecorrido = 0;
+var relogio;
+var timedEvent;
 
 //Variaveis de controle de fluxo
 var estado = 1;
@@ -185,7 +187,7 @@ function preload ()
     /**
      * Criação do grid de memória principal
      */
-    g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: {color: 0xf0000f}, fillStyle: { color: 0x00ff00, alpha: 1 } });
+    g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: {color: 0xc0c0c0}, fillStyle: { color: 0xc0c0c0, alpha: 1 } });
     g.strokeRect(0, 0, 40, 40);
     g.generateTexture('grid', 40, 40);
 
@@ -216,18 +218,36 @@ function preload ()
      */
     g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: { color: 0x000000}, fillStyle: { color: 0xff0000, alpha: 1 } });
     g.fillRect(0, 0, 40, 40);
+    g.strokeRect(0,0,40,40);
     g.generateTexture('pecavermelhapequena', 40, 40);
     g.clear();
     g.fillRect(0, 0, 80, 40);
+    g.strokeRect(0,0,80,40);
     g.generateTexture('pecavermelhamedia', 80, 40);
     g.clear();
     g.fillRect(0, 0, 120, 40);
+    g.strokeRect(0,0,120,40);
     g.generateTexture('pecavermelhagrande', 120, 40);
+    
+    g.fillStyle(0x00ff00, 1);
+    g.clear();
+    g.fillRect(0, 0, 40, 40);
+    g.strokeRect(0,0,40,40);
+    g.generateTexture('pecaverdepequena', 40, 40);
+    g.clear();
+    g.fillRect(0, 0, 80, 40);
+    g.strokeRect(0,0,80,40);
+    g.generateTexture('pecaverdemedia', 80, 40);
+    g.clear();
+    g.fillRect(0, 0, 120, 40);
+    g.strokeRect(0,0,120,40);
+    g.generateTexture('pecaverdegrande', 120, 40);
 }
 
 function create ()
 {
-    // qual algoritmo
+    // Exibe informações
+    relogio = this.add.text(630,120, String(temporizador),{ fill: '#000000' })
     infoalgoritmo = this.add.text(660, 180, '', { fill: '#000000' });
     var infomenu = this.add.text(670, 260, 'MENU', { fill: '#000000' });
     var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000' });
@@ -253,6 +273,25 @@ function create ()
     graphics.fillRectShape(par7);
     var par8 = new Phaser.Geom.Rectangle(600, 400, 200, 20);
     graphics.fillRectShape(par8);
+
+    //Cria Relogio
+    temporizador = 3;
+    flagtemporizador = false;
+    timedEvent = this.time.addEvent({
+        delay: 1000,
+        callback: function () {
+            tempodecorrido++;
+            decrementarTempoDasPecas();
+            if (flagtemporizador) {
+                temporizador--;
+                if(temporizador < 0){
+                    decrementarPontos(10);
+                }
+            }
+        },
+        timeScale: 1,
+        loop: true
+    });
 }
 
 function update ()
@@ -260,29 +299,31 @@ function update ()
     /*
         Estrutura da máquina de estado do jogo
      */
-    //Contabilizar o Tempo
-        //contarSegundos();
-        //decrementarTemporizador();
-    //Decrementar tempo de vida de cada peça na memoria
-    //Decrementar tempo de peças em Swap
-        decrementarTempoDasPecas();
-    //Acrescentar Pontos [se peça for destruida da memoria]
-        //acrescentarPontos()
-    //Decrementar Pontuação [se cronometro passar de 0]
-        //decrementarPontos();
+    //Funções realizadas pelo evento timedEvent a cada segundo
+        //Contabilizar o Tempo
+        //Decrementar tempo de vida de cada peça na memoria
+        //Decrementar tempo de peças em Swap
+        //Acrescentar Pontos [se peça for destruida da memoria]
+        //Decrementar Pontuação [se cronometro passar de 0]
+
+
     infopontuacaopontos.setText(pontos);
-    /* 
-        if(pontos <= 0){
-            estado = 6;
-        }
-    */
+    relogio.setText(temporizador);
+    
+     
+    if(pontos < 0){
+        estado = 6;
+    }
+    
     switch (estado) {
         case 1:            
             //------Iniciar Jogo
-            //Exibir Memoria Vazia
-            //Exibir Swap Vazia
-            //Exibir Cronometro
-            //Exibir Pontuação
+            //Funçõe realizadas em creat
+                //Exibir Memoria Vazia
+                //Exibir Swap Vazia
+                //Exibir Cronometro
+                //Exibir Pontuação
+            //Ainda falta implementar
             // Contagem Regressiva Para Iniciar Jogo
             estado = 2;
             break;
@@ -301,18 +342,21 @@ function update ()
                     melhorposicao = bestFit(novapeca,memoria);
                 }
             //Zerar Temporizador
-                //resetTemporizador();
-            estado = 3;
+                temporizador = 3;
+                timedEvent.elapsed = 0;
+                flagtemporizador = true;
+                estado = 3;
             break;
         case 3:
             //------Esperando Jogada
-            //Inicia Temporizador
-                //flagtemporizador = true;
             //Capturar Ação do jogador
             if(moveupecapramemoria){
                 moveupecapramemoria = false;
+                //Para temporizador
+                flagtemporizador = false;
                 estado = 2;
             }
+            //Ainda falta implementação SWAP
             /*if(moveupecadaswappramemoria){
                 moveupecadaswappramemoria = false;
                 estado = 5;
@@ -338,6 +382,7 @@ function update ()
             //------Fim de Jogo
             //Exibir fim de jogo
             //Mostrar Pontuação
+            timedEvent.paused = true;
             break;
         default:
             break;
@@ -512,16 +557,23 @@ function verificarAcerto(posicao,melhorescolha){
     return false;
 }
 
+
+/**
+ * Função que decrementa um numero de pontos
+ * @param {number} pts 
+ */
 function decrementarPontos(pts){
     pontos -= pts;
 }
 
+/**
+ * Função que acrescenta um numero de pontos
+ * 
+ * @param {number} pts 
+ */
+
 function acrescentarPontos(pts){
     pontos += pts;
-}
-
-function resetTemporizador(temporizador){
-    temporizador = 3;
 }
 
 /**
@@ -535,15 +587,12 @@ function decrementarTempoDasPecas(){
                 if(memoria.memoria[i][j].flagtempodevida){
                     memoria.memoria[i][j].tempodevida--;
                     if (memoria.memoria[i][j].tempodevida <= 0) {
-                        console.log(memoria.memoria);   
                         acrescentarPontos(5);
                         memoria.memoria[i][j].imagem.destroy();
                         for (let k = j+1; memoria.memoria[i][k] === memoria.memoria[i][j]; k++) {
                             memoria.memoria[i][k] = null;
                         }
-                        memoria.memoria[i][j] = null;
-                        console.log(memoria.memoria);
-                        
+                        memoria.memoria[i][j] = null;                        
                     }
                 }else if(memoria.memoria[i][j].flagtempoemswap){
                     peca.tempoemswap--;
