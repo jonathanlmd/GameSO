@@ -247,7 +247,7 @@ function preload ()
 function create ()
 {
     // Exibe informações
-    relogio = this.add.text(630,120, String(temporizador),{ fill: '#000000' })
+    relogio = this.add.text(600,120, String(temporizador),{ fill: '#000000' })
     infoalgoritmo = this.add.text(660, 180, '', { fill: '#000000' });
     var infomenu = this.add.text(670, 260, 'MENU', { fill: '#000000' });
     var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000' });
@@ -308,7 +308,7 @@ function update ()
 
 
     infopontuacaopontos.setText(pontos);
-    relogio.setText(temporizador);
+    relogio.setText('Tempo Restante: ' + temporizador);
     
      
     if(pontos < 0){
