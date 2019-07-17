@@ -12,13 +12,13 @@ class Peca{
             case 0x00ff00:
                 this.tempoemswap = 5;
                 break;
-            case 0xff0000:
+            case 0x0000ff:
                 this.tempoemswap = 7;
                 break;
-            case 0x5a005a:
+            case 0xe2f61a:
                 this.tempoemswap = 10;
                 break;
-            case 0xff8c00:
+            case 0x5a005a:
                 this.tempoemswap = 13;
                 break;
             default:
@@ -184,13 +184,40 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
+    //g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: {color: 0xc0c0c0}, fillStyle: { color: 0xc0c0c0, alpha: 1 } });
+    /*g.strokeRect(0, 0, 40, 40);
+    g.generateTexture('grid', 40, 40);*/
+    this.load.image('grid', 'img/grid.png');
+
+    /**
+     * Carregando imagens das peças
+     */
+    this.load.image('pecaazulpequena', 'img/azulpequena.png');
+    this.load.image('pecaazulmedia', 'img/azulmedia.png');
+    this.load.image('pecaazulgrande', 'img/azulgrande.png');
+
+    this.load.image('pecavermelhapequena', 'img/vermelhapequena.png');
+    this.load.image('pecavermelhamedia', 'img/vermelhamedia.png');
+    this.load.image('pecavermelhagrande', 'img/vermelhagrande.png');
+
+    this.load.image('pecaverdepequena', 'img/verdepequena.png');
+    this.load.image('pecaverdemedia', 'img/verdemedia.png');
+    this.load.image('pecaverdegrande', 'img/verdegrande.png');
+
+    this.load.image('pecaamarelapequena', 'img/amarelapequena.png');
+    this.load.image('pecaamarelamedia', 'img/amarelamedia.png');
+    this.load.image('pecaamarelagrande', 'img/amarelagrande.png');
+
+    this.load.image('pecaroxapequena', 'img/roxapequena.png');
+    this.load.image('pecaroxamedia', 'img/roxamedia.png');
+    this.load.image('pecaroxagrande', 'img/roxagrande.png');
+}
+
+function create ()
+{
     /**
      * Criação do grid de memória principal
      */
-    g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: {color: 0xc0c0c0}, fillStyle: { color: 0xc0c0c0, alpha: 1 } });
-    g.strokeRect(0, 0, 40, 40);
-    g.generateTexture('grid', 40, 40);
-
     grid = this.add.group({
         classType: Phaser.GameObjects.Image,
         createCallback: function(item){
@@ -213,39 +240,7 @@ function preload ()
         }
     });
 
-    /**
-     * Carregando imagens das peças
-     */
-    g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: { color: 0x000000}, fillStyle: { color: 0xff0000, alpha: 1 } });
-    g.fillRect(0, 0, 40, 40);
-    g.strokeRect(0,0,40,40);
-    g.generateTexture('pecavermelhapequena', 40, 40);
-    g.clear();
-    g.fillRect(0, 0, 80, 40);
-    g.strokeRect(0,0,80,40);
-    g.generateTexture('pecavermelhamedia', 80, 40);
-    g.clear();
-    g.fillRect(0, 0, 120, 40);
-    g.strokeRect(0,0,120,40);
-    g.generateTexture('pecavermelhagrande', 120, 40);
-    
-    g.fillStyle(0x00ff00, 1);
-    g.clear();
-    g.fillRect(0, 0, 40, 40);
-    g.strokeRect(0,0,40,40);
-    g.generateTexture('pecaverdepequena', 40, 40);
-    g.clear();
-    g.fillRect(0, 0, 80, 40);
-    g.strokeRect(0,0,80,40);
-    g.generateTexture('pecaverdemedia', 80, 40);
-    g.clear();
-    g.fillRect(0, 0, 120, 40);
-    g.strokeRect(0,0,120,40);
-    g.generateTexture('pecaverdegrande', 120, 40);
-}
 
-function create ()
-{
     // Exibe informações
     relogio = this.add.text(600,120, String(temporizador),{ fill: '#000000' })
     infoalgoritmo = this.add.text(660, 180, '', { fill: '#000000' });
@@ -401,15 +396,15 @@ function sortearTamanhoCorEAlgoritmo(){
     //verde
     }else if(i == 1){
         cor = 0x00ff00;
-    //amarelo
+    //azul
     }else if(i == 2){
-        cor = 0xff0000;
-    //roxo
+        cor = 0x0000ff;
+    //amarela
     }else if(i == 3){
-        cor = 0x5a005a;
-    //laranja
+        cor = 0xe2f61a;
+    //roxa
     }else if(i == 4){
-        cor = 0xff8c00;
+        cor = 0x5a005a;
     }
     i = Math.floor(Math.random() * 2);
     if(i == 0){
@@ -436,15 +431,66 @@ function sortearTamanhoCorEAlgoritmo(){
  */
 function criarEExibirPeca(scene){
     novapeca = new Peca(tamanho,cor);
-    if(novapeca.tamanho == 40){
-        novapeca.imagem = scene.add.image(630, 60, 'pecavermelhapequena').setOrigin(0,0);
+    switch (cor) {
+        case 0xff0000:
+            if(novapeca.tamanho == 40){
+                novapeca.imagem = scene.add.image(630, 60, 'pecavermelhapequena').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 80){
+                novapeca.imagem = scene.add.image(630, 60, 'pecavermelhamedia').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 120){
+                novapeca.imagem = scene.add.image(630, 60, 'pecavermelhagrande').setOrigin(0,0);
+            }
+            break;
+        case 0x00ff00:
+            if(novapeca.tamanho == 40){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaverdepequena').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 80){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaverdemedia').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 120){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaverdegrande').setOrigin(0,0);
+            }
+            break;
+        case 0x0000ff:
+            if(novapeca.tamanho == 40){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaazulpequena').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 80){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaazulmedia').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 120){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaazulgrande').setOrigin(0,0);
+            }
+            break;
+        case 0xe2f61a:
+            if(novapeca.tamanho == 40){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaamarelapequena').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 80){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaamarelamedia').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 120){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaamarelagrande').setOrigin(0,0);
+            }
+            break;
+        case 0x5a005a:
+            if(novapeca.tamanho == 40){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaroxapequena').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 80){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaroxamedia').setOrigin(0,0);
+            }
+            if(novapeca.tamanho == 120){
+                novapeca.imagem = scene.add.image(630, 60, 'pecaroxagrande').setOrigin(0,0);
+            }
+            break;
+        default:
+            break;
     }
-    if(novapeca.tamanho == 80){
-        novapeca.imagem = scene.add.image(630, 60, 'pecavermelhamedia').setOrigin(0,0);
-    }
-    if(novapeca.tamanho == 120){
-        novapeca.imagem = scene.add.image(630, 60, 'pecavermelhagrande').setOrigin(0,0);
-    }
+
     novapeca.imagem.name = 'novapeca';
     novapeca.imagem.peca = novapeca;
     novapeca.imagem.setInteractive();
