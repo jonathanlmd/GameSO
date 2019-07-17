@@ -171,7 +171,7 @@ var moveupecadamemoriapraswap = false;
 
 var config = {
     type: Phaser.AUTO,
-    width: 800,
+    width: 820,
     height: 600,
     backgroundColor: '#7f7196',
     scene: {
@@ -240,13 +240,13 @@ function create ()
 
 
     // Exibe informações
-    relogio = this.add.text(600,120, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
-    infoalgoritmo = this.add.text(660, 180, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    var infomenu = this.add.text(670, 260, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    var inforecordepontos = this.add.text(660, 300, '999', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    var infopontuacao = this.add.text(660, 320, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    infopontuacaopontos = this.add.text(660, 340, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    relogio = this.add.text(620,120, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
+    infoalgoritmo = this.add.text(670, 180, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    var infomenu = this.add.text(680, 260, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+	// var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    // var inforecordepontos = this.add.text(660, 300, '999', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    var infopontuacao = this.add.text(650, 280, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    infopontuacaopontos = this.add.text(690, 300, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
     
     // paredes do jogo
     var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
@@ -254,7 +254,7 @@ function create ()
     graphics.fillRectShape(par1);
     var par2 = new Phaser.Geom.Rectangle(0, 0, 800, 20);
     graphics.fillRectShape(par2);
-    var par3 = new Phaser.Geom.Rectangle(780, 0, 20, 600);
+    var par3 = new Phaser.Geom.Rectangle(800, 0, 20, 600);
     graphics.fillRectShape(par3);
     var par4 = new Phaser.Geom.Rectangle(0, 580, 800, 20);
     graphics.fillRectShape(par4);
@@ -264,7 +264,7 @@ function create ()
     graphics.fillRectShape(par6);
     var par7 = new Phaser.Geom.Rectangle(600, 220, 200, 20);
     graphics.fillRectShape(par7);
-    var par8 = new Phaser.Geom.Rectangle(600, 400, 200, 20);
+    var par8 = new Phaser.Geom.Rectangle(600, 360, 200, 20);
     graphics.fillRectShape(par8);
 
     //Cria Relogio
