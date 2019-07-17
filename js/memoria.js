@@ -150,9 +150,9 @@ var algoritmo;
 var pontos = 0;
 var novapeca = null;
 var memoria = new Memoria('memoriaprincipal',14,14);
-var grid;
-//var swap = new Memoria('swap',5,5);
-//var griSwap;
+var gridMemPrincipal;
+var swap = new Memoria('swap',5,5);
+var gridSwap;
 
 var infoalgoritmo = null;
 var infopontuacaopontos = null;
@@ -216,7 +216,7 @@ function create ()
     /**
      * Criação do grid de memória principal
      */
-    grid = this.add.group({
+    gridMemPrincipal = this.add.group({
         classType: Phaser.GameObjects.Image,
         createCallback: function(item){
             item.setInteractive();
@@ -235,6 +235,31 @@ function create ()
             cellHeight: 40,
             x: 40,
             y: 40
+        }
+    });
+
+    /**
+     * Grid Swap
+     */
+    gridSwap = this.add.group({
+        classType: Phaser.GameObjects.Image,
+        createCallback: function(item){
+            item.setInteractive();
+            item.input.dropZone = true;
+            item.name = 'swap';  
+        },
+        key: 'grid',
+        repeat: 24,
+        max: 25,
+        active: true,
+        hitArea: new Phaser.Geom.Rectangle(0, 0, 40, 40),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+        gridAlign: {
+            width: 5,
+            cellWidth: 40,
+            cellHeight: 40,
+            x: 620,
+            y: 400
         }
     });
 
