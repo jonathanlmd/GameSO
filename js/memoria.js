@@ -24,7 +24,7 @@ class Peca{
             default:
                 break;
         }
-        this.tempodevida = 20 + Math.floor(Math.random() * 8);
+        this.tempodevida = 50 + Math.floor(Math.random() * 20);
         this.flagtempodevida = false;
         this.flagtempoemswap = false;
         this.flagalinhamento = false;
@@ -184,9 +184,7 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    //g = this.make.graphics({ x: 0, y: 0, add: false, lineStyle: {color: 0xc0c0c0}, fillStyle: { color: 0xc0c0c0, alpha: 1 } });
-    /*g.strokeRect(0, 0, 40, 40);
-    g.generateTexture('grid', 40, 40);*/
+    //Carregando imagem do grid
     this.load.image('grid', 'img/grid.png');
 
     /**
@@ -242,13 +240,13 @@ function create ()
 
 
     // Exibe informações
-    relogio = this.add.text(600,120, String(temporizador),{ fill: '#000000' })
-    infoalgoritmo = this.add.text(660, 180, '', { fill: '#000000' });
-    var infomenu = this.add.text(670, 260, 'MENU', { fill: '#000000' });
-    var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000' });
-    var inforecordepontos = this.add.text(660, 300, '999', { fill: '#000000' });
-    var infopontuacao = this.add.text(660, 320, 'Pontuação:', { fill: '#000000' });
-    infopontuacaopontos = this.add.text(660, 340, String(pontos), { fill: '#000000' });
+    relogio = this.add.text(600,120, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
+    infoalgoritmo = this.add.text(660, 180, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    var infomenu = this.add.text(670, 260, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    var inforecordepontos = this.add.text(660, 300, '999', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    var infopontuacao = this.add.text(660, 320, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    infopontuacaopontos = this.add.text(660, 340, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
     
     // paredes do jogo
     var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
@@ -617,7 +615,6 @@ function decrementarPontos(pts){
  * 
  * @param {number} pts 
  */
-
 function acrescentarPontos(pts){
     pontos += pts;
 }
