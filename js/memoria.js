@@ -209,6 +209,8 @@ function preload ()
     this.load.image('pecaroxapequena', 'img/roxapequena.png');
     this.load.image('pecaroxamedia', 'img/roxamedia.png');
     this.load.image('pecaroxagrande', 'img/roxagrande.png');
+
+    this.load.audio('musicas', ['audio/TopGear1.mp3', 'audio/Tetris.mp3',]);
 }
 
 function create ()
@@ -310,6 +312,9 @@ function create ()
         timeScale: 1,
         loop: true
     });
+
+    var musicas = this.sound.add('musicas');
+    musicas.play();
 }
 
 function update ()
