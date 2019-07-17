@@ -150,9 +150,9 @@ var algoritmo;
 var pontos = 0;
 var novapeca = null;
 var memoria = new Memoria('memoriaprincipal',14,14);
-var grid;
-//var swap = new Memoria('swap',5,5);
-//var griSwap;
+var gridMemPrincipal;
+var swap = new Memoria('swap',5,5);
+var gridSwap;
 
 var infoalgoritmo = null;
 var infopontuacaopontos = null;
@@ -209,6 +209,8 @@ function preload ()
     this.load.image('pecaroxapequena', 'img/roxapequena.png');
     this.load.image('pecaroxamedia', 'img/roxamedia.png');
     this.load.image('pecaroxagrande', 'img/roxagrande.png');
+
+    this.load.audio('musicas', ['audio/TopGear1.mp3', 'audio/Tetris.mp3',]);
 }
 
 function create ()
@@ -216,7 +218,7 @@ function create ()
     /**
      * Criação do grid de memória principal
      */
-    grid = this.add.group({
+    gridMemPrincipal = this.add.group({
         classType: Phaser.GameObjects.Image,
         createCallback: function(item){
             item.setInteractive();
@@ -237,6 +239,32 @@ function create ()
             y: 40
         }
     });
+
+    /**
+     * Grid Swap
+     */
+    gridSwap = this.add.group({
+        classType: Phaser.GameObjects.Image,
+        createCallback: function(item){
+            item.setInteractive();
+            item.input.dropZone = true;
+            item.name = 'swap';  
+        },
+        key: 'grid',
+        repeat: 24,
+        max: 25,
+        active: true,
+        hitArea: new Phaser.Geom.Rectangle(0, 0, 40, 40),
+        hitAreaCallback: Phaser.Geom.Rectangle.Contains,
+        gridAlign: {
+            width: 5,
+            cellWidth: 40,
+            cellHeight: 40,
+            x: 620,
+            y: 400
+        }
+    });
+
 
     // Exibe informações
     relogio = this.add.text(620,120, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
@@ -284,6 +312,9 @@ function create ()
         timeScale: 1,
         loop: true
     });
+
+    var musicas = this.sound.add('musicas');
+    musicas.play();
 }
 
 function update ()
