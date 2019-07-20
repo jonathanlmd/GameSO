@@ -25,6 +25,7 @@ class Peca{
                 break;
         }
         this.tempodevida = 50 + Math.floor(Math.random() * 20);
+        this.temporizadorswap;
         this.flagtempodevida = false;
         this.flagtempoemswap = false;
         this.flagalinhamento = false;
@@ -93,7 +94,7 @@ class Memoria{
      */
     inserePeca(peca,linha,posicao){
         let temp = null;
-        if(this.flagalocacao && peca.tamanho/40+posicao <=14 && peca.alocada == null){
+        if(this.flagalocacao && !peca.flagalocada && peca.tamanho/40+posicao <=14 && peca.alocada == null){
             for (let i = posicao; (i<posicao+peca.tamanho/40) && (temp == null);i++){
                 temp = this.memoria[linha][i];
             }
@@ -173,7 +174,7 @@ var config = {
     type: Phaser.AUTO,
     width: 820,
     height: 600,
-    backgroundColor: '#7f7196',
+    backgroundColor: '#c0c0c0',
     scene: {
         preload: preload,
         create: create,
@@ -215,6 +216,8 @@ function preload ()
 
 function create ()
 {
+    var musicas = this.sound.add('musicas');
+    musicas.play();
     /**
      * Criação do grid de memória principal
      */
@@ -312,9 +315,6 @@ function create ()
         timeScale: 1,
         loop: true
     });
-
-    var musicas = this.sound.add('musicas');
-    musicas.play();
 }
 
 function update ()
@@ -333,10 +333,10 @@ function update ()
     infopontuacaopontos.setText(pontos);
     relogio.setText('Tempo Restante: ' + temporizador);
     
-     
-    if(pontos < 0){
+    //Condição de fim de jogo
+    /*if(pontos < 0){
         estado = 6;
-    }
+    }*/
     
     switch (estado) {
         case 1:            
@@ -380,26 +380,29 @@ function update ()
                 estado = 2;
             }
             //Ainda falta implementação SWAP
-            /*if(moveupecadaswappramemoria){
+            if(moveupecadaswappramemoria){
                 moveupecadaswappramemoria = false;
                 estado = 5;
             }
             if(moveupecadamemoriapraswap){
                 moveupecadamemoriapraswap = false;
                 estado = 4;
-            }*/
+            }
             break;
         case 4:
             //------Fazer SwapOut
             //Parar tempo de vida da swap
             //Iniciar cronometro da peça na swap
             //Decrementar pontos do jogador
+            decrementarPontos(10);
+            estado = 3;
             break;
         case 5:
             //------Fazer SwapIn
             //Zerar cronometro da peça na swap
             //Continuar contagem do tempo de vida da peça
             //Bloquear alocação de novas peças
+            estado = 3;
             break;
         case 6:
             //------Fim de Jogo
@@ -458,7 +461,9 @@ function sortearTamanhoCorEAlgoritmo(){
  * @param {Scene} scene -parametro que recebe o contexto do pelo qual está sendo chamado
  */
 function criarEExibirPeca(scene){
+    //instancia nova peça
     novapeca = new Peca(tamanho,cor);
+    //Atribui uma imagem conforme a cor e tamanho da peça
     switch (cor) {
         case 0xff0000:
             if(novapeca.tamanho == 40){
@@ -519,39 +524,45 @@ function criarEExibirPeca(scene){
             break;
     }
 
-    novapeca.imagem.name = 'novapeca';
+    //novapeca.imagem.name = 'novapeca';
+    //Define um ponteiro da imagem para a peca a qual pertence
     novapeca.imagem.peca = novapeca;
     novapeca.imagem.setInteractive();
+    //Habilita a ação de arrastar e tras a imagem para frente
     scene.input.setDraggable(novapeca.imagem);
     scene.children.bringToTop(novapeca.imagem);
 
+    //Habilita de alinhamento. Para alinhar apenas quando a peça estiver sobre a area de memoria
     novapeca.imagem.on('dragenter',function (pointer,target) {
         this.peca.flagalinhamento = true;
     });   
-
+    //Alinha a peça conforme a posição do ponteiro do mouse
     novapeca.imagem.on('dragover',function (pointer,target) {
         this.setPosition(target.getTopLeft().x, target.getTopLeft().y);
     });
-
+    //Move a peça normalmente quando a peça esta fora da area de memoria
     novapeca.imagem.on('drag', function (pointer, dragX, dragY) {
         if(!this.peca.flagalinhamento){
             this.setPosition(dragX, dragY);
         }
     });
-
+    //Desabilita o alinhamento. Para deixar de alinhar quando a peça sair a da area de memoria
     novapeca.imagem.on('dragleave', function (pointer, target) {
         this.peca.flagalinhamento = false;
     });
-
+    //Toda vez que a peça é solta ela deve voltar a sua posição de origem
     novapeca.imagem.on('pointerup', function (pointer) {
         this.setPosition(this.peca.origem.x,this.peca.origem.y);
     });
 
-    novapeca.imagem.on('drop',function (pointer, target) {
-        if(!memoria.inserePeca(this.peca,target.y/40-1,target.x/40-1)){
-            this.setPosition(this.peca.origem.x,this.peca.origem.y);
-        }else{
-            if(target.name == 'memoria'){
+    //Função chamada sempre que a peça é largada em alguma posição de alguma memoria
+    //Utilizada para definir qual foi a ação do jogador
+    novapeca.imagem.on('drop',function (pointer, target) {        
+        //Se for solta na memoria principal
+        if(target.name == 'memoria'){
+            //Se o local da memoria é valido
+            if(memoria.inserePeca(this.peca,target.y/40-1,target.x/40-1)){
+                //Se é uma nova peça sendo solta na memoria ou se é uma peça da swap sendo solta na memoria
                 if (this.peca === novapeca) {
                     novapeca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
                     if(verificarAcerto({x: target.y/40-1,y: target.x/40-1},melhorposicao)){
@@ -559,16 +570,34 @@ function criarEExibirPeca(scene){
                     }else{
                         acrescentarPontos(5);
                     }
+                    novapeca.flagalocada = true;
                     novapeca.flagtempodevida = true;
                     moveupecapramemoria = true;
-                    novapeca = null;                    
+                    novapeca = null;
                 }else{
+                    swap.removePeca(this.peca);
+                    this.peca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
+                    this.temporizadorswap = this.tempoemswap;
+                    this.peca.flagtempoemswap = false;
+                    this.peca.flagtempodevida = true;
                     moveupecadaswappramemoria = true;
                 }
-            }else{
-                moveupecadamemoriapraswap = true;
+            }
+        }else{
+            if(this.peca != novapeca){
+                this.peca.flagalocada = false;
+                if(swap.inserePeca(this.peca,((target.y-360)/40-1),((target.x-580)/40-1))){
+                    this.peca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
+                    memoria.removePeca(this.peca);
+                    this.peca.flagtempodevida = false;
+                    this.peca.flagtempoemswap = true;
+                    moveupecadamemoriapraswap = true;
+                }else{
+                    this.peca.flagalocada = true;
+                }
             }
         }
+        this.setPosition(this.peca.origem.x,this.peca.origem.y);
     });
 }
 
@@ -657,20 +686,23 @@ function decrementarTempoDasPecas(){
     for (let i = 0; i < memoria.numerodelinhas; i++) {
         for (let j = 0; j < memoria.tamanhodaslinhas; j++) {
             if (memoria.memoria[i][j] != null) {
-                if(memoria.memoria[i][j].flagtempodevida){
-                    memoria.memoria[i][j].tempodevida--;
-                    if (memoria.memoria[i][j].tempodevida <= 0) {
-                        acrescentarPontos(5);
-                        memoria.memoria[i][j].imagem.destroy();
-                        for (let k = j+1; memoria.memoria[i][k] === memoria.memoria[i][j]; k++) {
-                            memoria.memoria[i][k] = null;
-                        }
-                        memoria.memoria[i][j] = null;                        
+                memoria.memoria[i][j].tempodevida--;
+                if (memoria.memoria[i][j].tempodevida <= 0) {
+                    acrescentarPontos(5);
+                    memoria.memoria[i][j].imagem.destroy();
+                    for (let k = j+1; memoria.memoria[i][k] === memoria.memoria[i][j]; k++) {
+                        memoria.memoria[i][k] = null;
                     }
-                }else if(memoria.memoria[i][j].flagtempoemswap){
-                    peca.tempoemswap--;
+                    memoria.memoria[i][j] = null;                        
                 }
             }   
         }
-    }  
+    }
+    for (let i = 0; i < swap.numerodelinhas; i++) {
+        for (let j = 0; j < swap.tamanhodaslinhas; j++) {
+            if (swap.memoria[i][j] != null) {
+                swap.memoria[i][j].temporizadorswap--;
+            }
+        }       
+    }
 }
