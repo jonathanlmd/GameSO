@@ -29,7 +29,7 @@ class Peca{
         this.flagtempodevida = false;
         this.flagtempoemswap = false;
         this.flagalinhamento = false;
-        this.flagalocada = false;
+        this.alocada = null;
     }
 }
 
@@ -94,7 +94,7 @@ class Memoria{
      */
     inserePeca(peca,linha,posicao){
         let temp = null;
-        if(this.flagalocacao && !peca.flagalocada && peca.tamanho/40+posicao <=14 && peca.alocada == null){
+        if(this.flagalocacao && peca.alocada != this && peca.tamanho/40+posicao <=this.tamanhodaslinhas){
             for (let i = posicao; (i<posicao+peca.tamanho/40) && (temp == null);i++){
                 temp = this.memoria[linha][i];
             }
@@ -102,6 +102,7 @@ class Memoria{
                 for (let i = posicao; i < posicao+peca.tamanho/40; i++) {
                     this.memoria[linha][i] = peca;
                 }
+                peca.alocada = this;
                 return true;
             }else{
                 return false;
@@ -570,7 +571,6 @@ function criarEExibirPeca(scene){
                     }else{
                         acrescentarPontos(5);
                     }
-                    novapeca.flagalocada = true;
                     novapeca.flagtempodevida = true;
                     moveupecapramemoria = true;
                     novapeca = null;
@@ -584,20 +584,19 @@ function criarEExibirPeca(scene){
                 }
             }
         }else{
+            //Se não for a nova peça
             if(this.peca != novapeca){
-                this.peca.flagalocada = false;
                 if(swap.inserePeca(this.peca,((target.y-360)/40-1),((target.x-580)/40-1))){
                     this.peca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
                     memoria.removePeca(this.peca);
+                    this.peca.flagalocada = true;
                     this.peca.flagtempodevida = false;
                     this.peca.flagtempoemswap = true;
                     moveupecadamemoriapraswap = true;
-                }else{
-                    this.peca.flagalocada = true;
                 }
             }
         }
-        this.setPosition(this.peca.origem.x,this.peca.origem.y);
+        //this.setPosition(this.peca.origem.x,this.peca.origem.y);
     });
 }
 
