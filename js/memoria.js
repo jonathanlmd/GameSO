@@ -25,7 +25,7 @@ class Peca{
                 break;
         }
         this.tempodevida = 50 + Math.floor(Math.random() * 20);
-        this.temporizadorswap;
+        this.temporizadorswap = this.tempoemswap;
         this.flagtempodevida = false;
         this.flagtempoemswap = false;
         this.flagalinhamento = false;
@@ -94,20 +94,39 @@ class Memoria{
      */
     inserePeca(peca,linha,posicao){
         let temp = null;
-        if(this.flagalocacao && peca.alocada != this && peca.tamanho/40+posicao <=this.tamanhodaslinhas){
-            for (let i = posicao; (i<posicao+peca.tamanho/40) && (temp == null);i++){
-                temp = this.memoria[linha][i];
-            }
-            if(temp == null){
-                for (let i = posicao; i < posicao+peca.tamanho/40; i++) {
-                    this.memoria[linha][i] = peca;
+        if(peca == novapeca){
+            if(this.flagalocacao && peca.alocada != this && peca.tamanho/40+posicao <=this.tamanhodaslinhas){
+                for (let i = posicao; (i<posicao+peca.tamanho/40) && (temp == null);i++){
+                    temp = this.memoria[linha][i];
                 }
-                peca.alocada = this;
-                return true;
-            }else{
-                return false;
+                if(temp == null){
+                    for (let i = posicao; i < posicao+peca.tamanho/40; i++) {
+                        this.memoria[linha][i] = peca;
+                    }
+                    peca.alocada = this;
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }else{
+            if(peca.alocada != this && peca.tamanho/40+posicao <=this.tamanhodaslinhas){
+                for (let i = posicao; (i<posicao+peca.tamanho/40) && (temp == null);i++){
+                    temp = this.memoria[linha][i];
+                }
+                if(temp == null){
+                    for (let i = posicao; i < posicao+peca.tamanho/40; i++) {
+                        this.memoria[linha][i] = peca;
+                    }
+                    peca.alocada = this;
+                    peca.imagem.clearTint();
+                    return true;
+                }else{
+                    return false;
+                }
             }
         }
+
         return false;
     }
 
@@ -212,7 +231,8 @@ function preload ()
     this.load.image('pecaroxamedia', 'img/roxamedia.png');
     this.load.image('pecaroxagrande', 'img/roxagrande.png');
 
-    this.load.audio('musicas', ['audio/TopGear1.mp3', 'audio/Tetris.mp3',]);
+    //this.load.audio('musicas', ['audio/TopGear1.mp3', 'audio/Tetris.mp3',]);
+    this.load.audio('musicas', ['audio/Tetris.mp3']);
 }
 
 function create ()
@@ -371,6 +391,14 @@ function update ()
                 flagtemporizador = true;
                 estado = 3;
             break;
+            /**
+             * Obs.: As funções relacionadas as peças com parar ou retomar a contagem de seu tempo de vida
+             * são realizadas no método "drop" atribuido a cada peça em sua criação,
+             * uma vez que não existe e não é necessário criar referências para acessa-las na função
+             * update. Sendo assim esses estados ficam de modo simbólico para representar a máquina
+             * de estados, para decrementar ou executar outras funções relacionadas ao moviento da peça
+             * e para alguma adaptação ou melhoria com mais funções no futuro.
+             */
         case 3:
             //------Esperando Jogada
             //Capturar Ação do jogador
@@ -400,9 +428,9 @@ function update ()
             break;
         case 5:
             //------Fazer SwapIn
-            //Zerar cronometro da peça na swap
-            //Continuar contagem do tempo de vida da peça
-            //Bloquear alocação de novas peças
+                //Zerar cronometro da peça na swap
+                //Continuar contagem do tempo de vida da peça
+                //Bloquear alocação de novas peças
             estado = 3;
             break;
         case 6:
@@ -580,6 +608,7 @@ function criarEExibirPeca(scene){
                     this.temporizadorswap = this.tempoemswap;
                     this.peca.flagtempoemswap = false;
                     this.peca.flagtempodevida = true;
+                    memoria.flagalocacao = true;
                     moveupecadaswappramemoria = true;
                 }
             }
@@ -701,6 +730,11 @@ function decrementarTempoDasPecas(){
         for (let j = 0; j < swap.tamanhodaslinhas; j++) {
             if (swap.memoria[i][j] != null) {
                 swap.memoria[i][j].temporizadorswap--;
+                console.log(swap.memoria[i][j].temporizadorswap);
+                if(swap.memoria[i][j].temporizadorswap <= 0){
+                    swap.memoria[i][j].imagem.setTint(0x5e5e5e);
+                    memoria.flagalocacao = false;
+                }
             }
         }       
     }
