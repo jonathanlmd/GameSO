@@ -4,7 +4,7 @@ class Peca{
         this.tamanho = tamanho;
         this.cor = cor;
         this.imagem = null;
-        this.origem = {x: 630,y: 60};
+        this.origem = {x: 560,y: 100};
         switch (cor) {
             case 0xff0000:
                 this.tempoemswap = 3;
@@ -170,9 +170,9 @@ var tamanho;
 var algoritmo;
 var pontos = 0;
 var novapeca = null;
-var memoria = new Memoria('memoriaprincipal',14,14);
+var memoria = new Memoria('memoriaprincipal',5,10);
 var gridMemPrincipal;
-var swap = new Memoria('swap',5,5);
+var swap = new Memoria('swap',5,6);
 var gridSwap;
 
 var infoalgoritmo = null;
@@ -192,7 +192,7 @@ var moveupecadamemoriapraswap = false;
 
 var config = {
     type: Phaser.AUTO,
-    width: 820,
+    width: 800,
     height: 600,
     backgroundColor: '#c0c0c0',
     scene: {
@@ -231,6 +231,12 @@ function preload ()
     this.load.image('pecaroxamedia', 'img/roxamedia.png');
     this.load.image('pecaroxagrande', 'img/roxagrande.png');
 
+    this.load.image('imagemdefundo','img/fundo.jpg');
+    this.load.image('container1','img/container1.jpg');
+    this.load.image('container2','img/container2.jpg');
+    this.load.image('container3','img/container3.jpg');
+    this.load.image('container4','img/container4.jpg');
+
     //this.load.audio('musicas', ['audio/TopGear1.mp3', 'audio/Tetris.mp3',]);
     this.load.audio('musicas', ['audio/Tetris.mp3']);
 }
@@ -239,6 +245,13 @@ function create ()
 {
     var musicas = this.sound.add('musicas');
     musicas.play();
+
+    this.add.image(0,0,'imagemdefundo').setOrigin(0,0);
+    this.add.image(520,80,'container2').setOrigin(0,0);
+    this.add.image(520,220,'container1').setOrigin(0,0);
+    this.add.image(520,300,'container4').setOrigin(0,0);
+    //this.add.image(520,240,'container3').setOrigin(0,0);
+
     /**
      * Criação do grid de memória principal
      */
@@ -250,17 +263,17 @@ function create ()
             item.name = 'memoria';  
         },
         key: 'grid',
-        repeat: 195,
-        max: 196,
+        repeat: memoria.tamanhodaslinhas*memoria.numerodelinhas-1,
+        max: memoria.tamanhodaslinhas*memoria.numerodelinhas,
         active: true,
         hitArea: new Phaser.Geom.Rectangle(0, 0, 40, 40),
         hitAreaCallback: Phaser.Geom.Rectangle.Contains,
         gridAlign: {
-            width: 14,
+            width: memoria.tamanhodaslinhas,
             cellWidth: 40,
             cellHeight: 40,
-            x: 40,
-            y: 40
+            x: 80,
+            y: 100
         }
     });
 
@@ -275,49 +288,27 @@ function create ()
             item.name = 'swap';  
         },
         key: 'grid',
-        repeat: 24,
-        max: 25,
+        repeat: swap.tamanhodaslinhas*swap.numerodelinhas-1,
+        max: swap.tamanhodaslinhas*swap.numerodelinhas,
         active: true,
         hitArea: new Phaser.Geom.Rectangle(0, 0, 40, 40),
         hitAreaCallback: Phaser.Geom.Rectangle.Contains,
         gridAlign: {
-            width: 5,
+            width: swap.tamanhodaslinhas,
             cellWidth: 40,
             cellHeight: 40,
-            x: 620,
-            y: 400
+            x: 80,
+            y: 340
         }
     });
 
-
     // Exibe informações
-    relogio = this.add.text(620,120, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
-    infoalgoritmo = this.add.text(670, 180, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    var infomenu = this.add.text(680, 260, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-	// var inforecorde = this.add.text(660, 280, 'Recorde', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    // var inforecordepontos = this.add.text(660, 300, '999', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    var infopontuacao = this.add.text(650, 280, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    infopontuacaopontos = this.add.text(690, 300, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    relogio = this.add.text(540,160, String(temporizador),{ fill: '#000000', fontFamily: 'font1' ,fontSize: 10})
+    infoalgoritmo = this.add.text(580, 237, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    this.add.text(600, 320, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 })
+    this.add.text(570, 340, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    infopontuacaopontos = this.add.text(610, 360, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
     
-    // paredes do jogo
-    var graphics = this.add.graphics({ fillStyle: { color: 0x0000ff } });
-    var par1 = new Phaser.Geom.Rectangle(0, 0, 20, 600);
-    graphics.fillRectShape(par1);
-    var par2 = new Phaser.Geom.Rectangle(0, 0, 800, 20);
-    graphics.fillRectShape(par2);
-    var par3 = new Phaser.Geom.Rectangle(800, 0, 20, 600);
-    graphics.fillRectShape(par3);
-    var par4 = new Phaser.Geom.Rectangle(0, 580, 800, 20);
-    graphics.fillRectShape(par4);
-    var par5 = new Phaser.Geom.Rectangle(580, 0, 20, 600);
-    graphics.fillRectShape(par5);
-    var par6 = new Phaser.Geom.Rectangle(600, 140, 200, 20);
-    graphics.fillRectShape(par6);
-    var par7 = new Phaser.Geom.Rectangle(600, 220, 200, 20);
-    graphics.fillRectShape(par7);
-    var par8 = new Phaser.Geom.Rectangle(600, 360, 200, 20);
-    graphics.fillRectShape(par8);
-
     //Cria Relogio
     temporizador = 3;
     flagtemporizador = false;
@@ -496,57 +487,57 @@ function criarEExibirPeca(scene){
     switch (cor) {
         case 0xff0000:
             if(novapeca.tamanho == 40){
-                novapeca.imagem = scene.add.image(630, 60, 'pecavermelhapequena').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecavermelhapequena').setOrigin(0,0);
             }
             if(novapeca.tamanho == 80){
-                novapeca.imagem = scene.add.image(630, 60, 'pecavermelhamedia').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecavermelhamedia').setOrigin(0,0);
             }
             if(novapeca.tamanho == 120){
-                novapeca.imagem = scene.add.image(630, 60, 'pecavermelhagrande').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecavermelhagrande').setOrigin(0,0);
             }
             break;
         case 0x00ff00:
             if(novapeca.tamanho == 40){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaverdepequena').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaverdepequena').setOrigin(0,0);
             }
             if(novapeca.tamanho == 80){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaverdemedia').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaverdemedia').setOrigin(0,0);
             }
             if(novapeca.tamanho == 120){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaverdegrande').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaverdegrande').setOrigin(0,0);
             }
             break;
         case 0x0000ff:
             if(novapeca.tamanho == 40){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaazulpequena').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaazulpequena').setOrigin(0,0);
             }
             if(novapeca.tamanho == 80){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaazulmedia').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaazulmedia').setOrigin(0,0);
             }
             if(novapeca.tamanho == 120){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaazulgrande').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaazulgrande').setOrigin(0,0);
             }
             break;
         case 0xe2f61a:
             if(novapeca.tamanho == 40){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaamarelapequena').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaamarelapequena').setOrigin(0,0);
             }
             if(novapeca.tamanho == 80){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaamarelamedia').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaamarelamedia').setOrigin(0,0);
             }
             if(novapeca.tamanho == 120){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaamarelagrande').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaamarelagrande').setOrigin(0,0);
             }
             break;
         case 0x5a005a:
             if(novapeca.tamanho == 40){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaroxapequena').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(580, 100, 'pecaroxapequena').setOrigin(0,0);
             }
             if(novapeca.tamanho == 80){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaroxamedia').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(580, 100, 'pecaroxamedia').setOrigin(0,0);
             }
             if(novapeca.tamanho == 120){
-                novapeca.imagem = scene.add.image(630, 60, 'pecaroxagrande').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(580, 100, 'pecaroxagrande').setOrigin(0,0);
             }
             break;
         default:
@@ -590,11 +581,11 @@ function criarEExibirPeca(scene){
         //Se for solta na memoria principal
         if(target.name == 'memoria'){
             //Se o local da memoria é valido
-            if(memoria.inserePeca(this.peca,target.y/40-1,target.x/40-1)){
+            if(memoria.inserePeca(this.peca,(target.y-gridMemPrincipal.getFirstAlive().y+40)/40-1,(target.x-gridMemPrincipal.getFirstAlive().x+40)/40-1)){
                 //Se é uma nova peça sendo solta na memoria ou se é uma peça da swap sendo solta na memoria
                 if (this.peca === novapeca) {
                     novapeca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
-                    if(verificarAcerto({x: target.y/40-1,y: target.x/40-1},melhorposicao)){
+                    if(verificarAcerto({x: (target.y-gridMemPrincipal.getFirstAlive().y+40)/40-1,y: (target.x-gridMemPrincipal.getFirstAlive().x+40)/40-1},melhorposicao)){
                         acrescentarPontos(15);
                     }else{
                         acrescentarPontos(5);
@@ -614,8 +605,9 @@ function criarEExibirPeca(scene){
             }
         }else{
             //Se não for a nova peça
-            if(this.peca != novapeca){
-                if(swap.inserePeca(this.peca,((target.y-360)/40-1),((target.x-580)/40-1))){
+            if(this.peca != novapeca){ 
+                          
+                if(swap.inserePeca(this.peca,((target.y-gridSwap.getFirstAlive().y+40)/40-1),((target.x-gridSwap.getFirstAlive().x+40)/40-1))){
                     this.peca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
                     memoria.removePeca(this.peca);
                     this.peca.flagalocada = true;
@@ -625,7 +617,7 @@ function criarEExibirPeca(scene){
                 }
             }
         }
-        //this.setPosition(this.peca.origem.x,this.peca.origem.y);
+        this.setPosition(this.peca.origem.x,this.peca.origem.y);
     });
 }
 
