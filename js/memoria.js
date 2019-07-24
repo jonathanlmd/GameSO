@@ -596,7 +596,7 @@ function criarEExibirPeca(scene){
                 }else{
                     swap.removePeca(this.peca);
                     this.peca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
-                    this.temporizadorswap = this.tempoemswap;
+                    this.peca.temporizadorswap = this.peca.tempoemswap;
                     this.peca.flagtempoemswap = false;
                     this.peca.flagtempodevida = true;
                     memoria.flagalocacao = true;
@@ -714,7 +714,9 @@ function decrementarTempoDasPecas(){
                         memoria.memoria[i][k] = null;
                     }
                     memoria.memoria[i][j] = null;                        
-                }
+                }else{
+                    j+=memoria.memoria[i][j].tamanho-1;
+                }        
             }   
         }
     }
@@ -722,10 +724,11 @@ function decrementarTempoDasPecas(){
         for (let j = 0; j < swap.tamanhodaslinhas; j++) {
             if (swap.memoria[i][j] != null) {
                 swap.memoria[i][j].temporizadorswap--;
-                console.log(swap.memoria[i][j].temporizadorswap);
                 if(swap.memoria[i][j].temporizadorswap <= 0){
                     swap.memoria[i][j].imagem.setTint(0x5e5e5e);
                     memoria.flagalocacao = false;
+                }else{
+                    j+=swap.memoria[i][j].tamanho;
                 }
             }
         }       
