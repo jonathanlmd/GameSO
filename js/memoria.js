@@ -66,13 +66,13 @@ class Memoria{
         return false;
     }
     /**
-     * Função adicional que remove uma peça com base na posição indicada e 
+     * Função adicional que remove uma peça com base na posição indicada e
      * retorna a peça que foi removida
-     * 
+     *
      * @param {number} linha -linha em que a peça a ser removida está alocada
      * @param {number} posicao - posição da linha em que a peça está alocada
      */
-	
+
     removePeca_porposicao(linha,posicao){
         let temp = null;
         if(this.memoria[linha][posicao] != null){
@@ -87,7 +87,7 @@ class Memoria{
     }
     /**
      * Insere a peça especificada na linha e posicao desejada
-     * 
+     *
      * @param {Peca} peca - peça a ser inserida
      * @param {number} linha - linha de inserção da peça
      * @param {number} posicao - posição onde a peça será inserida
@@ -133,7 +133,7 @@ class Memoria{
     /**
      * Retorna a peça alocada na posição de memoria indicada;
      * Se não houver peça retorna null;
-     * 
+     *
      * @param {number} linha - linha da posição de memoria
      * @param {number} posicao - posição na linha de memória
      */
@@ -156,19 +156,20 @@ class Memoria{
     /**
      * Retirar uma peça da memoria e deleta ela visualmente do jogo
      * A liberação do espaço fisico na memoria do computador é feita pelo garbage colector
-     * 
+     *
      * @param {Peca} p - peça alocada a ser destruida
      */
     destruirPeca(p){
         this.removePeca(p);
         //resta implementar a remoção visual da peça;
-    }       
+    }
 }
 
 var cor;
 var tamanho;
 var algoritmo;
 var pontos = 0;
+var maxpontos = 0;
 var novapeca = null;
 var memoria = new Memoria('memoriaprincipal',5,10);
 var gridMemPrincipal;
@@ -260,7 +261,7 @@ function create ()
         createCallback: function(item){
             item.setInteractive();
             item.input.dropZone = true;
-            item.name = 'memoria';  
+            item.name = 'memoria';
         },
         key: 'grid',
         repeat: memoria.tamanhodaslinhas*memoria.numerodelinhas-1,
@@ -285,7 +286,7 @@ function create ()
         createCallback: function(item){
             item.setInteractive();
             item.input.dropZone = true;
-            item.name = 'swap';  
+            item.name = 'swap';
         },
         key: 'grid',
         repeat: swap.tamanhodaslinhas*swap.numerodelinhas-1,
@@ -308,7 +309,7 @@ function create ()
     this.add.text(600, 320, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 })
     this.add.text(570, 340, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
     infopontuacaopontos = this.add.text(610, 360, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    
+
     //Cria Relogio
     temporizador = 3;
     flagtemporizador = false;
@@ -344,14 +345,17 @@ function update ()
 
     infopontuacaopontos.setText(pontos);
     relogio.setText('Tempo Restante: ' + temporizador);
-    
+
     //Condição de fim de jogo
-    /*if(pontos < 0){
+    if(pontos < 0){
         estado = 6;
-    }*/
-    
+    }
+    if(pontos>maxpontos){
+      maxpontos=pontos;
+    }
+
     switch (estado) {
-        case 1:            
+        case 1:
             //------Iniciar Jogo
             //Funçõe realizadas em creat
                 //Exibir Memoria Vazia
@@ -374,10 +378,10 @@ function update ()
                     melhorposicao = bestFit(novapeca,memoria);
                 }else{
                     //worsrFit();
-                    melhorposicao = bestFit(novapeca,memoria);
+                    melhorposicao = worstFit(novapeca,memoria);
                 }
             //Zerar Temporizador
-                temporizador = 3;
+                temporizador = 10;
                 timedEvent.elapsed = 0;
                 flagtemporizador = true;
                 estado = 3;
@@ -432,7 +436,7 @@ function update ()
             break;
         default:
             break;
-    }	
+    }
 }
 
 /**
@@ -477,7 +481,7 @@ function sortearTamanhoCorEAlgoritmo(){
 /**
  * Função responsável por instanciar e exibir uma nova peça com base nas informações das variaveis
  * cor e tamanho
- * 
+ *
  * @param {Scene} scene -parametro que recebe o contexto do pelo qual está sendo chamado
  */
 function criarEExibirPeca(scene){
@@ -555,7 +559,7 @@ function criarEExibirPeca(scene){
     //Habilita de alinhamento. Para alinhar apenas quando a peça estiver sobre a area de memoria
     novapeca.imagem.on('dragenter',function (pointer,target) {
         this.peca.flagalinhamento = true;
-    });   
+    });
     //Alinha a peça conforme a posição do ponteiro do mouse
     novapeca.imagem.on('dragover',function (pointer,target) {
         this.setPosition(target.getTopLeft().x, target.getTopLeft().y);
@@ -577,7 +581,7 @@ function criarEExibirPeca(scene){
 
     //Função chamada sempre que a peça é largada em alguma posição de alguma memoria
     //Utilizada para definir qual foi a ação do jogador
-    novapeca.imagem.on('drop',function (pointer, target) {        
+    novapeca.imagem.on('drop',function (pointer, target) {
         //Se for solta na memoria principal
         if(target.name == 'memoria'){
             //Se o local da memoria é valido
@@ -605,8 +609,8 @@ function criarEExibirPeca(scene){
             }
         }else{
             //Se não for a nova peça
-            if(this.peca != novapeca){ 
-                          
+            if(this.peca != novapeca){
+
                 if(swap.inserePeca(this.peca,((target.y-gridSwap.getFirstAlive().y+40)/40-1),((target.x-gridSwap.getFirstAlive().x+40)/40-1))){
                     this.peca.origem = {x: target.getTopLeft().x, y:target.getTopLeft().y};
                     memoria.removePeca(this.peca);
@@ -622,15 +626,43 @@ function criarEExibirPeca(scene){
 }
 
 /**
- * Função BestFit retorna um vetor de 3 posições com as melhores posições para alocar a peça
+ * Função BestFit e Worstfit retorna um vetor de 3 posições com as melhores posições para alocar a peça
  * 1 posição são indices de linha e 2 posição são indices de onde iniciam os espaços vazios em cada linha
  * 3 posição é o tamanho do melhor espaço
- * Ex.: [[0,3],[2,5],3] significa que o tamanho do melhor espaço é 3 e existem dois 
+ * Ex.: [[0,3],[2,5],3] significa que o tamanho do melhor espaço é 3 e existem dois
  * espaços na matriz com esse tamanho, um na linha 0 posição 2 e outro na linha 3 posição 5
- * 
+ *
  * @param {Peca} peca - peça que será alocada
  * @param {Memoria} mem - memoria em que a peça será alocada
  */
+ function worstFit(peca,mem){
+      let piorescolha = [[],[],mem.tamanhodaslinhas];
+      let min = peca.tamanho/40;
+      let tam = 0;
+      for (let k = 0; k < mem.numerodelinhas; k++) {
+          for (let i = 0; i < mem.tamanhodaslinhas; i++) {
+              if(mem.memoria[k][i] == null){
+                  let j = i;
+                  while (j < mem.tamanhodaslinhas && mem.memoria[k][j] == null) {
+                      j++;
+                  }
+                  tam=j-i;
+                  if(tam >= min){
+                      if (tam > piorescolha[2]||piorescolha[0].length==0) {
+                        piorescolha[0] = [k];
+                        piorescolha[1] = [i];
+                        piorescolha[2] = tam;
+                      }else if(tam == piorescolha[2]){
+                          piorescolha[0].push(k);
+                          piorescolha[1].push(i);
+                      }
+                 }
+                 i = j;
+             }
+         }
+     }
+     return piorescolha;
+}
 function bestFit(peca,mem){
     let melhorescolha = [[],[],mem.tamanhodaslinhas];
     let min = peca.tamanho/40;
@@ -665,17 +697,17 @@ function bestFit(peca,mem){
 }
 
 /**
- * Função responsável por verificar se a peça foi inserida em uma posição ideal conforme o algoritmo 
+ * Função responsável por verificar se a peça foi inserida em uma posição ideal conforme o algoritmo
  * indicado
- * 
+ *
  * @param {Object} posicao - Objeto com posicao x e y das coordenas de onde a peça foi inserida
  * @param {Array} melhorescolha - Array com as melhores escolhas possiveis
  */
 function verificarAcerto(posicao,melhorescolha){
     for (let i = 0; i < melhorescolha[0].length; i++) {
         if (melhorescolha[0][i] == posicao.x && melhorescolha[1][i] == posicao.y) {
-            return true;        
-        }        
+            return true;
+        }
     }
     return false;
 }
@@ -683,7 +715,7 @@ function verificarAcerto(posicao,melhorescolha){
 
 /**
  * Função que decrementa um numero de pontos
- * @param {number} pts 
+ * @param {number} pts
  */
 function decrementarPontos(pts){
     pontos -= pts;
@@ -691,8 +723,8 @@ function decrementarPontos(pts){
 
 /**
  * Função que acrescenta um numero de pontos
- * 
- * @param {number} pts 
+ *
+ * @param {number} pts
  */
 function acrescentarPontos(pts){
     pontos += pts;
@@ -713,11 +745,11 @@ function decrementarTempoDasPecas(){
                     for (let k = j+1; memoria.memoria[i][k] === memoria.memoria[i][j]; k++) {
                         memoria.memoria[i][k] = null;
                     }
-                    memoria.memoria[i][j] = null;                        
+                    memoria.memoria[i][j] = null;
                 }else{
                     j+=memoria.memoria[i][j].tamanho-1;
-                }        
-            }   
+                }
+            }
         }
     }
     for (let i = 0; i < swap.numerodelinhas; i++) {
@@ -731,6 +763,6 @@ function decrementarTempoDasPecas(){
                     j+=swap.memoria[i][j].tamanho;
                 }
             }
-        }       
+        }
     }
 }
