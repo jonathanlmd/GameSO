@@ -1,4 +1,5 @@
 //Classe peça
+
 class Peca{
     constructor(tamanho, cor){
         this.tamanho = tamanho;
@@ -52,6 +53,16 @@ class Memoria{
      * Remove a peça especificada
      * @param {Peca} p - objeto peça a ser removida
      */
+    clear(){
+        for (let i = 0; i < this.numerodelinhas; i++) {
+            for (let j = 0; j < this.tamanhodaslinhas; j++) {
+                if(this.memoria[i][j] != null){
+                    this.memoria[i][j].imagem.destroy();
+                }
+                this.memoria[i][j]=null;
+            }
+        }
+    }
     removePeca(p){
         if (p!=null) {
             for (let i = 0; i < this.numerodelinhas; i++) {
@@ -182,15 +193,18 @@ var melhorposicao;
 var temporizador;
 var flagtemporizador;
 var tempodecorrido = 0;
+var flagreg;
+var regtempo=3;
 var relogio;
 var timedEvent;
-
+var t1;
+var t2;
+var t3;
 //Variaveis de controle de fluxo
-var estado = 1;
+var estado = 0;
 var moveupecapramemoria = false;
 var moveupecadaswappramemoria = false;
 var moveupecadamemoriapraswap = false;
-
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -326,7 +340,21 @@ function create ()
             }
         },
         timeScale: 1,
-        loop: true
+        loop: true,
+        paused:true
+    });
+    flagreg = false;
+    contagemRegEvent = this.time.addEvent({
+        delay:1000,
+        callback: function (){
+            if(flagreg){
+                if(regtempo>0){
+                    regtempo--;
+                }
+            }
+        },
+        timeScale: 1,
+        loop: true,
     });
 }
 
@@ -344,8 +372,9 @@ function update ()
 
 
     infopontuacaopontos.setText(pontos);
-    relogio.setText('Tempo Restante: ' + temporizador);
-
+    if(regtempo==0){
+      relogio.setText('Tempo Restante: ' + temporizador);
+    }
     //Condição de fim de jogo
     if(pontos < 0){
         estado = 6;
@@ -355,16 +384,36 @@ function update ()
     }
 
     switch (estado) {
-        case 1:
+        case 0:
             //------Iniciar Jogo
             //Funçõe realizadas em creat
-                //Exibir Memoria Vazia
-                //Exibir Swap Vazia
-                //Exibir Cronometro
-                //Exibir Pontuação
-            //Ainda falta implementar
-            // Contagem Regressiva Para Iniciar Jogo
-            estado = 2;
+            //Exibir Memoria Vazia
+            //Exibir Swap Vazia
+            //Exibir Cronometro
+            //Exibir Pontuação
+        //Ainda falta implementar
+        // Contagem Regressiva Para Iniciar Jogo
+            relogio.setText('Clique para começar');
+            memoria.clear();
+            swap.clear();
+            infoalgoritmo.setText();
+            maxpontos=0;
+            pontos=0;
+            if(novapeca!=null){
+                novapeca.imagem.destroy();
+            }
+            if(game.input.activePointer.isDown){
+                flagreg=true;
+                regtempo=3;
+                estado = 1;
+            }
+            break;
+        case 1:
+            relogio.setText('Começando em ' + regtempo);
+            if(regtempo==0){
+                timedEvent.paused = false;
+                estado = 2;
+            }
             break;
         case 2:
             //------Mostrar Peça
@@ -381,7 +430,7 @@ function update ()
                     melhorposicao = worstFit(novapeca,memoria);
                 }
             //Zerar Temporizador
-                temporizador = 10;
+                temporizador = 3;
                 timedEvent.elapsed = 0;
                 flagtemporizador = true;
                 estado = 3;
@@ -432,8 +481,17 @@ function update ()
             //------Fim de Jogo
             //Exibir fim de jogo
             //Mostrar Pontuação
+            gameOver(this);
+            pontos=0;
             timedEvent.paused = true;
+            estado = 7;
             break;
+        case 7:
+          // Espera clicar para voltar ao inicio
+          if(game.input.activePointer.isDown){
+            clearGameOver();
+            estado = 0;
+          }
         default:
             break;
     }
@@ -636,8 +694,7 @@ function criarEExibirPeca(scene){
  * @param {Memoria} mem - memoria em que a peça será alocada
  */
  function worstFit(peca,mem){
-      let piorescolha = [[],[],mem.tamanhodaslinhas];
-      let min = peca.tamanho/40;
+      let piorescolha = [[],[],peca.tamanho/40];
       let tam = 0;
       for (let k = 0; k < mem.numerodelinhas; k++) {
           for (let i = 0; i < mem.tamanhodaslinhas; i++) {
@@ -647,17 +704,16 @@ function criarEExibirPeca(scene){
                       j++;
                   }
                   tam=j-i;
-                  if(tam >= min){
-                      if (tam > piorescolha[2]||piorescolha[0].length==0) {
-                        piorescolha[0] = [k];
-                        piorescolha[1] = [i];
-                        piorescolha[2] = tam;
-                      }else if(tam == piorescolha[2]){
-                          piorescolha[0].push(k);
-                          piorescolha[1].push(i);
-                      }
-                 }
-                 i = j;
+
+                  if (tam > piorescolha[2]) {
+                      piorescolha[0] = [k];
+                      piorescolha[1] = [i];
+                      piorescolha[2] = tam;
+                  }else if(tam == piorescolha[2]){
+                      piorescolha[0].push(k);
+                      piorescolha[1].push(i);
+                  }
+                  i = j;
              }
          }
      }
@@ -710,6 +766,18 @@ function verificarAcerto(posicao,melhorescolha){
         }
     }
     return false;
+}
+
+function gameOver(scene){
+  t1 = scene.add.text(300, 280, 'Game Over', { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 30});
+  t2 = scene.add.text(300, 360, 'Recorde: ' + maxpontos, { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 15});
+  t3 = scene.add.text(300, 390, 'Clique para recomeçar', { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 15});
+}
+
+function clearGameOver(){
+  t1.destroy();
+  t2.destroy();
+  t3.destroy();
 }
 
 
