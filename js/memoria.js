@@ -597,13 +597,13 @@ function criarEExibirPeca(scene){
             break;
         case 0x5a005a:
             if(novapeca.tamanho == 40){
-                novapeca.imagem = scene.add.image(580, 100, 'pecaroxapequena').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaroxapequena').setOrigin(0,0);
             }
             if(novapeca.tamanho == 80){
-                novapeca.imagem = scene.add.image(580, 100, 'pecaroxamedia').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaroxamedia').setOrigin(0,0);
             }
             if(novapeca.tamanho == 120){
-                novapeca.imagem = scene.add.image(580, 100, 'pecaroxagrande').setOrigin(0,0);
+                novapeca.imagem = scene.add.image(560, 100, 'pecaroxagrande').setOrigin(0,0);
             }
             break;
         default:
