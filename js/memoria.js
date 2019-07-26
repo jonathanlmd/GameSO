@@ -324,6 +324,8 @@ function create ()
     infoalgoritmo = this.add.text(580, 237, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
     this.add.text(600, 320, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 })
     this.add.text(570, 340, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
+    this.add.text(60,50,'MEMORIA PRINCIPAL',{ fill: '#000000', fontFamily: 'font1' ,fontSize: 15})
+    this.add.text(60,290,'SWAP',{ fill: '#000000', fontFamily: 'font1' ,fontSize: 15})
     infopontuacaopontos = this.add.text(610, 360, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
 
     //Cria Relogio
