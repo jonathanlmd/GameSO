@@ -205,6 +205,7 @@ var estado = 0;
 var moveupecapramemoria = false;
 var moveupecadaswappramemoria = false;
 var moveupecadamemoriapraswap = false;
+
 var config = {
     type: Phaser.AUTO,
     width: 800,
@@ -259,6 +260,7 @@ function preload ()
 function create ()
 {
     var musicas = this.sound.add('musicas');
+    musicas.loop = true;
     musicas.play();
 
     this.add.image(0,0,'imagemdefundo').setOrigin(0,0);
@@ -436,11 +438,11 @@ function update ()
                 estado = 3;
             break;
             /**
-             * Obs.: As funções relacionadas as peças com parar ou retomar a contagem de seu tempo de vida
+             * Obs.: As funções relacionadas as peças como parar ou retomar a contagem de seu tempo de vida
              * são realizadas no método "drop" atribuido a cada peça em sua criação,
              * uma vez que não existe e não é necessário criar referências para acessa-las na função
              * update. Sendo assim esses estados ficam de modo simbólico para representar a máquina
-             * de estados, para decrementar ou executar outras funções relacionadas ao moviento da peça
+             * de estados, para decrementar ou executar outras funções relacionadas ao movimento da peça
              * e para alguma adaptação ou melhoria com mais funções no futuro.
              */
         case 3:
