@@ -201,6 +201,7 @@ var timedEvent;
 var t1;
 var t2;
 var t3;
+var t4;
 //Variaveis de controle de fluxo
 var estado = 0;
 var moveupecapramemoria = false;
@@ -774,15 +775,17 @@ function verificarAcerto(posicao,melhorescolha){
 }
 
 function gameOver(scene){
-  t1 = scene.add.text(300, 280, 'Game Over', { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 30});
-  t2 = scene.add.text(300, 360, 'Recorde: ' + maxpontos, { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 15});
-  t3 = scene.add.text(300, 390, 'Clique para recomeçar', { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 15});
+  t4 = scene.add.image(400,300,'container3').setAlpha(0.75);
+  t1 = scene.add.text(270, 220, 'Game Over', { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 30});
+  t2 = scene.add.text(270, 300, 'Recorde: ' + maxpontos, { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 15});
+  t3 = scene.add.text(270, 330, 'Clique para recomeçar', { fill: '#000000', fontFamily: 'font1', align:'center' ,fontSize: 15});
 }
 
 function clearGameOver(){
   t1.destroy();
   t2.destroy();
   t3.destroy();
+  t4.destroy();
 }
 
 
