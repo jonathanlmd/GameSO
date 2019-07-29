@@ -8,24 +8,24 @@ class Peca{
         this.origem = {x: 560,y: 100};
         switch (cor) {
             case 0xff0000:
-                this.tempoemswap = 3;
-                break;
-            case 0x00ff00:
                 this.tempoemswap = 5;
                 break;
+            case 0x00ff00:
+                this.tempoemswap = 8;
+                break;
             case 0x0000ff:
-                this.tempoemswap = 7;
+                this.tempoemswap = 11;
                 break;
             case 0xe2f61a:
-                this.tempoemswap = 10;
+                this.tempoemswap = 14;
                 break;
             case 0x5a005a:
-                this.tempoemswap = 13;
+                this.tempoemswap = 16;
                 break;
             default:
                 break;
         }
-        this.tempodevida = 50 + Math.floor(Math.random() * 20);
+        this.tempodevida = 10 + Math.floor(Math.random() * 20);
         this.temporizadorswap = this.tempoemswap;
         this.flagtempodevida = false;
         this.flagtempoemswap = false;
