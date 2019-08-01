@@ -194,6 +194,7 @@ var infopontuacaopontos = null;
 var melhorposicao;
 var temporizador;
 var flagtemporizador;
+var musicas;
 var tempodecorrido = 0;
 var flagreg;
 var regtempo=3;
@@ -264,18 +265,20 @@ function preload ()
 
 function create ()
 {
-    var musicas = this.sound.add('musicas');
+    musicas = this.sound.add('musicas');
     musicas.loop = true;
-    musicas.play();
+    musicas.play();   
+    
 
     this.add.image(0,0,'imagemdefundo').setOrigin(0,0);
     this.add.image(520,80,'container2').setOrigin(0,0);
     this.add.image(520,220,'container1').setOrigin(0,0);
     this.add.image(520,300,'container4').setOrigin(0,0);
     soundimage=this.add.image(750,0,'soundon').setOrigin(0.0);
+    soundimage.setInteractive();
     soundstatus=1;
     soundimage.on('pointerup', function (pointer) {
-          this.alterasom();
+          alterasom(this.scene);
       });
 
     /**
@@ -513,16 +516,26 @@ function update ()
 /**
  * Função responsável por alterar o som
  */
-function alterasom(){
+function alterasom(scene){   
  soundimage.destroy();
  if(soundstatus){
-   soundimage=this.add.image(750,0,'soundoff').setOrigin(0.0);
+   soundimage = scene.add.image(750,0,'soundoff').setOrigin(0.0);
+   soundimage.setInteractive();
+   soundimage.on('pointerup', function (pointer) {
+    alterasom(this.scene);
+    });
    soundstatus=0;
    musicas.stop();
- }else{
-   soundimage=this.add.image(750,0,'soundon').setOrigin(0.0);
+   //musicas.mute = true;
+ }else{     
+   soundimage = scene.add.image(750,0,'soundon').setOrigin(0.0);
+   soundimage.setInteractive();
+   soundimage.on('pointerup', function (pointer) {
+    alterasom(this.scene);
+    });
    soundstatus=1;
    musicas.play();
+   //musicas.mute = false;
  }
 }
 /**
