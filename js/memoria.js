@@ -187,7 +187,8 @@ var memoria = new Memoria('memoriaprincipal',5,10);
 var gridMemPrincipal;
 var swap = new Memoria('swap',5,6);
 var gridSwap;
-
+var soundstatus;
+var soundimage;
 var infoalgoritmo = null;
 var infopontuacaopontos = null;
 var melhorposicao;
@@ -254,9 +255,11 @@ function preload ()
     this.load.image('container2','img/container2.jpg');
     this.load.image('container3','img/container3.jpg');
     this.load.image('container4','img/container4.jpg');
-
+    this.load.image('soundon','img/soundon.png');
+    this.load.image('soundoff','img/soundoff.png');
     //this.load.audio('musicas', ['audio/TopGear1.mp3', 'audio/Tetris.mp3',]);
     this.load.audio('musicas', ['audio/Tetris.mp3']);
+
 }
 
 function create ()
@@ -269,7 +272,11 @@ function create ()
     this.add.image(520,80,'container2').setOrigin(0,0);
     this.add.image(520,220,'container1').setOrigin(0,0);
     this.add.image(520,300,'container4').setOrigin(0,0);
-    //this.add.image(520,240,'container3').setOrigin(0,0);
+    soundimage=this.add.image(750,0,'soundon').setOrigin(0.0);
+    soundstatus=1;
+    soundimage.on('pointerup', function (pointer) {
+          this.alterasom();
+      });
 
     /**
      * Criação do grid de memória principal
@@ -326,7 +333,7 @@ function create ()
     infoalgoritmo = this.add.text(580, 237, '', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
     this.add.text(600, 320, 'MENU', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 })
     this.add.text(570, 340, 'Pontuação:', { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
-    this.add.text(60,50,'MEMORIA PRINCIPAL',{ fill: '#000000', fontFamily: 'font1' ,fontSize: 15})
+    this.add.text(60,50,'MEMÓRIA PRINCIPAL',{ fill: '#000000', fontFamily: 'font1' ,fontSize: 15})
     this.add.text(60,290,'SWAP',{ fill: '#000000', fontFamily: 'font1' ,fontSize: 15})
     infopontuacaopontos = this.add.text(610, 360, String(pontos), { fill: '#000000', fontFamily: 'font1' ,fontSize: 11 });
 
@@ -362,6 +369,7 @@ function create ()
         timeScale: 1,
         loop: true,
     });
+
 }
 
 function update ()
@@ -502,7 +510,21 @@ function update ()
             break;
     }
 }
-
+/**
+ * Função responsável por alterar o som
+ */
+function alterasom(){
+ soundimage.destroy();
+ if(soundstatus){
+   soundimage=this.add.image(750,0,'soundoff').setOrigin(0.0);
+   soundstatus=0;
+   musicas.stop();
+ }else{
+   soundimage=this.add.image(750,0,'soundon').setOrigin(0.0);
+   soundstatus=1;
+   musicas.play();
+ }
+}
 /**
  * Função responsável por sortear Tamanho Cor e Algoritmo para a proxima peca a ser exibida
  * Os valores são armazenados nas variaveis globais cor tamanho e algoritmo
